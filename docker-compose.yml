@@ -1,0 +1,28 @@
+version: "3"
+services:
+  db:
+    container_name: db
+    image: aerospike/aerospike-server
+    ports:
+      - "3000:3000"
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 40000
+        hard: 40000
+  amc:
+    container_name: amc
+    image: aerospike/amc
+    depends_on:
+    - db
+    ports:
+      - "8081:8081"
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: /bin/bash
+    tty: true
+    container_name: client
+    volumes:
+      - ./scripts:/root
